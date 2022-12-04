@@ -1,4 +1,4 @@
-from enum import Enum
+from util import readRaw
 
 def parseRPS(input):
   # rock
@@ -28,6 +28,9 @@ def calScore(opponentRaw, youRaw):
   opponent = parse(opponentRaw)
   you = parse(youRaw)
 
+  return calMatchScore(opponent, you) + you
+
+def calMatchScore(opponent, you):
   matchScore = 0
   # win
   if opponent - you == 2: # scissors vs rock
@@ -44,61 +47,55 @@ def calScore(opponentRaw, youRaw):
   # lose
   elif opponent > you: 
     matchScore = 0
-  return matchScore + you
+  return matchScore
 
 def part1(inputFile):
   score = 0
-  with open(inputFile) as f:
-    for line in f.readlines():
-      # remove new line char
-      if line[-1] == '\n':
-        line = line[:-1]
-
-      tokens = line.split(" ")
-      # assert(len(tokens) == 2)
-      score += calScore(tokens[0], tokens[1])
+  for tokens in readRaw(inputFile):
+    assert(len(tokens) == 2)
+    score += calScore(tokens[0], tokens[1])
   print(score)
   return score
 
 
-# # pushDownMaxCals(maxCals, 1, 46337)
-# # [49371, 41171, 33390]
-# # [49371, 46337, 41171]
-# def pushDownMaxCals(maxCals, i, newMax):
-#   maxCals[-1] = -1
-#   for j in reversed(range(i + 1, len(maxCals))):
-#     maxCals[j] = maxCals[j-1]
-#   maxCals[i] = newMax
+def parseResult(result):
+  # lose
+  if result == 'X':
+    return 0
+  # draw
+  if result == 'Y':
+    return 3
+  # win
+  if result == 'Z':
+    return 6
+  raise Exception("unknown input")
+  
 
-# def part2(inputFile):
-#   maxCals = [0, 0, 0]
-#   tempCal = 0
-#   with open(inputFile) as f:
-#     for line in f.readlines():
-#       # remove new line char
-#       if line[-1] == '\n':
-#         line = line[:-1]
+def calYou(opponent, result):
+  if result == 3: # draw
+    return opponent
+  elif result == 6: # win
+    return ((opponent + 1) % 3) if opponent != 2 else 3
+  elif result == 0: # lose
+    return (opponent - 1) if opponent != 1 else 3
 
-#       if line == "":
-#         # conclude and see if it can be the top 3 so far
-#         for i, maxCal in enumerate(maxCals):
-#           if tempCal > maxCal:
-#             print(maxCals)
-#             pushDownMaxCals(maxCals, i, tempCal)
-#             print(maxCals)
-#             break
-#         # reset  
-#         tempCal = 0
-#       else:
-#         tempCal += int(line)
-    
-#     # for final line 
-#     if tempCal > maxCal:
-#       maxCal = tempCal 
-#     print(maxCals)
-#     print(sum(maxCals))
+def calScore2(opponentRaw, resultRaw):
+  result = parseResult(resultRaw)
+  you  = calYou(parse(opponentRaw), result)
+  
+  verify = (calMatchScore(parse(opponentRaw), you))
+  assert verify == result, (parse(opponentRaw), you, verify, result)
+  return result + you
+  
+def part2(inputFile):
+  lines = readRaw(inputFile)
+  score = 0
+  for tokens in lines:
+    temp = calScore2(tokens[0], tokens[1])
+    score += temp
+  return score
 
 if __name__ == "__main__":
   inputFile = 'source/day2.txt'
-  part1(inputFile)
-  # part2(inputFile)
+  # part1(inputFile)
+  print(part2(inputFile))
