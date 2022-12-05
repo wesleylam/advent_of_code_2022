@@ -46,9 +46,25 @@ def part1(inputFile):
   for i, item in stack.items():
     returnStr += (item.pop())
   return returnStr
+
+def part2(inputFile):
+  stack, commands = parse(inputFile)
+  for command in commands:
+    numToMove, fromCol, toCol = command
+    
+    startIndex = len(stack[fromCol]) - numToMove
+    stack[toCol] += stack[fromCol][startIndex:]
+    
+    for i in range(numToMove):
+      stack[fromCol].pop()
+      
+  returnStr = ""
+  for i, item in stack.items():
+    returnStr += (item.pop())
+  return returnStr
   
 
 if __name__ == "__main__":
   inputFile = 'source/day5.txt'
-  print(part1(inputFile))
-  # print(part2(inputFile))
+  # print(part1(inputFile))
+  print(part2(inputFile))
