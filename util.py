@@ -6,6 +6,6 @@ def readRaw(inputFile, splitToken = " "):
       if line[-1] == '\n':
         line = line[:-1]
 
-      tokens = line.split(splitToken)
+      tokens = line.split(splitToken) if splitToken else line
       lines.append(tokens)
     return lines

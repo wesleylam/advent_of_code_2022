@@ -67,8 +67,6 @@ def part1(inputFile):
 
 def part2(inputFile):
   finalSizes = getDirSizes(inputFile)
-    
-  print(finalSizes)
   totalSpace = 70000000
   freeSpace = totalSpace - finalSizes["/"]
   requireSpace = 30000000
