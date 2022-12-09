@@ -1,6 +1,6 @@
 from util import readRaw
 
-def part1(inputFile):
+def getDirSizes(inputFile):
   lines = readRaw(inputFile, splitToken=' ')
   
   levels = {}
@@ -55,15 +55,31 @@ def part1(inputFile):
           size = finalSizes[toPath] 
         temp += size
       finalSizes[path] = temp
+      
+  return finalSizes
+
+def part1(inputFile):
+  finalSizes = getDirSizes(inputFile)
     
   # print(finalSizes)
   return sum([size for p, size in finalSizes.items() if size <= 100000])
 
 
 def part2(inputFile):
-  return part1(inputFile, 14)
+  finalSizes = getDirSizes(inputFile)
+    
+  print(finalSizes)
+  totalSpace = 70000000
+  freeSpace = totalSpace - finalSizes["/"]
+  requireSpace = 30000000
+  
+  least = totalSpace
+  for p, size in finalSizes.items():
+    if size + freeSpace >= requireSpace:
+      least = size if size < least else least
+  return least
   
 if __name__ == "__main__":
   inputFile = 'source/day7.txt'
-  print(part1(inputFile))
-  # print(part2(inputFile))
+  # print(part1(inputFile))
+  print(part2(inputFile))
